@@ -1,0 +1,251 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<title>Home</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- Bootstrap Core CSS -->
+<link href="/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+
+
+<!-- Custom CSS -->
+<link href="/css/style.css" rel='stylesheet' type='text/css' />
+<link rel="stylesheet" href="/css/morris.css" type="text/css"/>
+<!-- Graph CSS -->
+<link href="/css/font-awesome.css" rel="stylesheet">
+<!-- jQuery -->
+<script src="/js/jquery-2.1.4.min.js"></script>
+<!-- //jQuery -->
+<link href='http://fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<!-- lined-icons -->
+<link rel="stylesheet" href="/css/icon-font.min.css" type='text/css' />
+<!-- //lined-icons -->
+    <style type="text/css">
+        .auto-style3 {
+            width: 105px;
+            margin-top: 11px;
+            height: 82px;
+        }
+        
+        .auto-style9 {
+            height: 400px;
+            width: 1600px;
+        }
+        .file {
+            position: relative;/*绝对定位!*/
+            display: inline-block;/*设置为行内元素*/
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            text-decoration: none;
+            text-indent: 0;
+            line-height: 20px;
+        }
+        .file input {
+            position: absolute;/*相对定位*/
+            right: 0;
+            top: 0;
+            opacity: 0;/*将上传组件设置为透明的*/
+            font-size: 100px;
+        }
+        .file:hover {
+            background: #AADDFF;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+
+
+        </style>
+    
+</head> 
+<body style="">
+   <div class="page-container">
+   <!--/content-inner-->
+        <div class="left-content">
+	        <div class="mother-grid-inner">
+             <!--header start here-->
+				<div class="header-main">
+					    <p style="text-align:center; color: #1B93E1;font-size:35px;" >
+                            <img alt="" class="auto-style3" src="/images/logo.png" style="opacity:0.75;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i-KG 基础教育知识图谱自动生成工具</p>
+					
+				     <div class="clearfix"> </div>	
+				</div>
+<!--heder end here-->
+		<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/index">主页</a> <i class="fa fa-angle-right"></i></li>
+            </ol>
+
+            <script type="text/javascript">
+
+                function loadFile(fileName,fileContent){
+                    $.ajax({
+                        url: '/data/postText',
+                        data: {'fileName':fileName,'fileContent':fileContent},
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function(data){
+                            console.log(data);
+                        }
+                    })
+                }
+
+                function show() {
+                    var reader = new FileReader();
+                    var fs = document.getElementById("filePicker").files;
+                    var formData = new FormData();
+                    for(var i=0; i<fs.length; i++){
+                        formData.append('file',fs[i]);
+                    }
+                    $.ajax({
+                        url: "/data/upload",
+                        type: "post",
+                        dataType: "json",
+                        data: formData,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (json_data) {
+                            alert("恭喜你！上传成功");
+                        }
+                    });
+                    /*
+                    for (var i=0; i<fs.length; i++) {
+                        var file = fs.item(i);
+                        var fileName = file.name;
+                        alert(fileName);
+                        reader.onload = function () {
+                            console.log(data);
+                            var tObj = document.getElementById('a6_input');
+                            tObj.value = this.result;
+                            formData.append(fileName,this.result)
+                            loadFile(fileName,this.result);
+                        };
+                        reader.readAsText(file);
+                    }*/
+                }
+            </script>
+
+              <div style="float:left;width:49%;" >
+                  <input type="file" name="file" multiple id="filePicker" class="auto-style8"/></div>
+                  <input type="button" class="btn active btn-dark btn-block" value = "上传文本"  onclick="show()" style="width: 10%; height: 34px;"/></div>
+              <br/><br/>
+              <div id="textshow" class="textarea">
+                  <p><textarea id="a6_input" style=" height: 469px;width: 1597px;"></textarea></p>
+              </div>
+              <br/>
+                <div style="float:right;width:10%;"><input type="button" class="btn active btn-dark btn-block" value = "生成图谱"  onclick="GraphShow()" class="auto-style4"/></div> 
+               <br/><br/>
+   
+        <script>
+        function GraphShow(){
+                 window.location.href='/Graphshow';
+        }
+        </script>
+
+
+		<script>
+		$(document).ready(function() {
+			 var navoffeset=$(".header-main").offset().top;
+			 $(window).scroll(function(){
+				var scrollpos=$(window).scrollTop(); 
+				if(scrollpos >=navoffeset){
+					$(".header-main").addClass("fixed");
+				}else{
+					$(".header-main").removeClass("fixed");
+				}
+			 });
+			 
+		});
+		</script>
+
+
+<div class="copyrights">
+	 <p>Copyright &copy; <a href="" target="_blank">2019.NNU_JYJS_SpecialTeam302</a> All rights reserved.</p>
+</div>
+</div>
+  <!--//content-inner-->
+			<!--/sidebar-menu-->
+				<div class="sidebar-menu">
+					<header class="logo1">
+						<a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> 
+					</header>
+						<div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+                    <div class="menu">
+                    <ul id="menu">
+                        <li><a href="/index"><i class="fa fa-tachometer"></i> <span>主页</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico"><a href="/participate"><i class="fa fa-envelope nav_icon"></i><span>分词结果</span><div class="clearfix"></div></a></li>
+                        <li><a href="/frequency"><i class="fa fa-picture-o" aria-hidden="true"></i><span>词频统计</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico"><a href="/duel"><i class="fa fa-bar-chart"></i><span>复合词拼接</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico">
+                            <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
+                        </li>
+                        <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico">
+                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
+                        </li>
+                        <li>
+                            <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
+                    </ul>
+                </div>
+							  </div>
+							  <div class="clearfix"></div>		
+							</div>
+							<script>
+							var toggle = true;
+										
+							$(".sidebar-icon").click(function() {                
+							  if (toggle)
+							  {
+								$(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+								$("#menu span").css({"position":"absolute"});
+							  }
+							  else
+							  {
+								$(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+								setTimeout(function() {
+								  $("#menu span").css({"position":"relative"});
+								}, 400);
+							  }
+											
+											toggle = !toggle;
+										});
+							</script>
+<!--js -->
+<script src="/js/jquery.nicescroll.js"></script>
+<script src="/js/scripts.js"></script>
+<!-- Bootstrap Core JavaScript -->
+   <script src="/js/bootstrap.min.js"></script>
+   <!-- /Bootstrap Core JavaScript -->	   
+<!-- morris JavaScript -->	
+<script src="/js/raphael-min.js"></script>
+<script>
+	$(document).ready(function() {
+		//BOX BUTTON SHOW AND CLOSE
+	   jQuery('.small-graph-box').hover(function() {
+		  jQuery(this).find('.box-button').fadeIn('fast');
+	   }, function() {
+		  jQuery(this).find('.box-button').fadeOut('fast');
+	   });
+	   jQuery('.small-graph-box .box-close').click(function() {
+		  jQuery(this).closest('.small-graph-box').fadeOut(200);
+		  return false;
+	   });
+	   
+	    //CHARTS
+	    function gd(year, day, month) {
+			return new Date(year, month - 1, day).getTime();
+		}
+			
+	   
+	});
+	</script>
+</body>
+</html>

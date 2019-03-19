@@ -1,0 +1,170 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- Bootstrap Core CSS -->
+    <link href="/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="../static/css/lightbox.css">
+    <!-- Graph CSS -->
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <!-- //jQuery -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <!-- lined-icons -->
+    <link rel="stylesheet" href="/css/icon-font.min.css" type='text/css' />
+    <!-- //lined-icons -->
+    <style>
+
+        .auto-style3 {
+            width: 105px;
+            margin-top: 11px;
+            height: 82px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!--/content-inner-->
+        <div class="left-content">
+            <div class="mother-grid-inner">
+                <!--header start here-->
+                <div class="header-main">
+                    <p style="text-align:center; color: #1B93E1;font-size:35px;">
+                        <img alt="" class="auto-style3" src="/images/logo.png" style="opacity:0.75;" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i-KG 基础教育知识图谱自动生成工具
+                    </p>
+                    <div class="clearfix"> </div>
+                </div>
+                <!--heder end here-->
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="">上下位关系</a> <i class="fa fa-angle-right"></i></li>
+                </ol>
+
+                <script type="text/javascript">
+                    function show() {
+                        var reader = new FileReader();
+                        reader.onload = function () {
+                            var tObj = document.getElementById('a6_input');
+                            tObj.value = this.result;
+
+                        }
+                        var f = document.getElementById("filePicker").files[0];
+                        reader.readAsText(f);
+                    }
+                </script>
+                <!--文本框-->
+
+
+                <br /><br />
+                <div id="textshow" class="textarea">
+                    <textarea id="a6_input" style="height: 230px;width: 1245px; "></textarea>
+                </div>
+                <br />
+
+
+                 <p style="color: #3399FF;" class="address-text">*上下位关系：
+                    分类关系即上下位关系，是指概念词之间具有明显的层次结构，是上位词和下位词之间的关系，通常也是包含关系，例如力与浮力，
+                     学科概念间的分类关系体现了一种先后顺序，先要理解上位概念才能理解下位概念，也是学习顺序的体现，
+                     本工具使用的是TextMatch算法。</p>
+                <script>
+                    $(document).ready(function () {
+                        var navoffeset = $(".header-main").offset().top;
+                        $(window).scroll(function () {
+                            var scrollpos = $(window).scrollTop();
+                            if (scrollpos >= navoffeset) {
+                                $(".header-main").addClass("fixed");
+                            } else {
+                                $(".header-main").removeClass("fixed");
+                            }
+                        });
+
+                    });
+                </script>
+                <div class="copyrights">
+                    <p>Copyright &copy; 2019.NNU_JYJS_SpecialTeam302 All rights reserved.</p>
+                </div>
+            </div>
+            <!--//content-inner-->
+            <!--/sidebar-menu-->
+            <div class="sidebar-menu">
+                <header class="logo1">
+                    <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a>
+                </header>
+                <div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+                <div class="menu">
+                    <ul id="menu">
+                        <li><a href="/index"><i class="fa fa-tachometer"></i> <span>主页</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico"><a href="/participate"><i class="fa fa-envelope nav_icon"></i><span>分词结果</span><div class="clearfix"></div></a></li>
+                        <li><a href="/frequency"><i class="fa fa-picture-o" aria-hidden="true"></i><span>词频统计</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico"><a href="/duel"><i class="fa fa-bar-chart"></i><span>复合词拼接</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico">
+                            <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
+                        </li>
+                        <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                        <li id="menu-academico">
+                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
+                        </li>
+                        <li>
+                            <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <script>
+            var toggle = true;
+
+            $(".sidebar-icon").click(function () {
+                if (toggle) {
+                    $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+                    $("#menu span").css({ "position": "absolute" });
+                }
+                else {
+                    $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+                    setTimeout(function () {
+                        $("#menu span").css({ "position": "relative" });
+                    }, 400);
+                }
+
+                toggle = !toggle;
+            });
+        </script>
+        <!--js -->
+        <script src="/js/jquery.nicescroll.js"></script>
+        <script src="/js/scripts.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="/js/bootstrap.min.js"></script>
+        <!-- /Bootstrap Core JavaScript -->
+        <!-- morris JavaScript -->
+        <script src="/js/raphael-min.js"></script>
+        <script>
+            $(document).ready(function () {
+                //BOX BUTTON SHOW AND CLOSE
+                jQuery('.small-graph-box').hover(function () {
+                    jQuery(this).find('.box-button').fadeIn('fast');
+                }, function () {
+                    jQuery(this).find('.box-button').fadeOut('fast');
+                });
+                jQuery('.small-graph-box .box-close').click(function () {
+                    jQuery(this).closest('.small-graph-box').fadeOut(200);
+                    return false;
+                });
+
+                //CHARTS
+                function gd(year, day, month) {
+                    return new Date(year, month - 1, day).getTime();
+                }
+
+
+            });
+        </script>
+</body>
+</html>
