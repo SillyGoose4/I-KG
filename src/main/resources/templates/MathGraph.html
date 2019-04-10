@@ -1,0 +1,368 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- Bootstrap Core CSS -->
+    <link href="/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+    <!-- Custom CSS -->
+    <link href="/css/style.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="/css/morris.css" type="text/css"/>
+    <!-- Graph CSS -->
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <!-- //jQuery -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <!-- lined-icons -->
+    <link rel="stylesheet" href="/css/icon-font.min.css" type='text/css' />
+    <!-- //lined-icons -->
+    <style type="text/css">
+        .auto-style3 {
+            width: 105px;
+            margin-top: 11px;
+            height: 82px;
+        }
+        .auto-style5 {
+            float: left;
+            width: 46%;
+        }
+        text {
+            font: 18px Microsoft YaHei;
+            pointer-events: none;
+        }
+        .auto-style3 {
+            width: 105px;
+            margin-top: 11px;
+            height: 82px;
+        }
+    </style>
+
+</head>
+
+<body style="">
+<div class="page-container">
+    <!--/content-inner-->
+    <div class="left-content">
+        <div class="mother-grid-inner">
+            <!--header start here-->
+            <div class="header-main">
+                <p style="text-align:center; color: #1B93E1;font-size:35px;" >
+                    <img alt="" class="auto-style3" src="../static/images/logo.png" style="opacity:0.75;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i-KG 基础教育知识图谱自动生成工具</p>
+
+                <div class="clearfix"> </div>
+            </div>
+            <!--heder end here-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">知识图谱</a> <i class="fa fa-angle-right"></i></li>
+            </ol>
+
+            <script type="text/javascript">
+                function show() {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var tObj = document.getElementById('a6_input');
+                        tObj.value = this.result;
+
+                    }
+                    var f = document.getElementById("filePicker").files[0];
+                    reader.readAsText(f);
+                }
+            </script>
+
+
+            <script>
+                function GraphShow() {
+                    window.location.href = 'Graphshow.html';
+                }
+            </script>
+
+
+            <script>
+                $(document).ready(function () {
+                    var navoffeset = $(".header-main").offset().top;
+                    $(window).scroll(function () {
+                        var scrollpos = $(window).scrollTop();
+                        if (scrollpos >= navoffeset) {
+                            $(".header-main").addClass("fixed");
+                        } else {
+                            $(".header-main").removeClass("fixed");
+                        }
+                    });
+
+                });
+            </script>
+
+            <!--********************-->
+            <script src="/js/d3.v3.min.js"></script>
+            <script>
+                //需要写一个js从txt文档中读取数据
+                // http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+                var links = [];
+                $.ajax({
+                    url: "/data/Math1Data",
+                    type: "GET",
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        links = eval(data);
+                    }
+                })
+
+                console.log(links);
+                var nodes = {};
+
+                links.forEach(function (link) {
+                    link.source = nodes[link.source] || (nodes[link.source] = { name: link.source });
+                    link.target = nodes[link.target] || (nodes[link.target] = { name: link.target });
+                });
+
+                var width = 1200,
+                    height = 600;
+
+                var force = d3.layout.force()//layout将json格式转化为力学图可用的格式
+                    .nodes(d3.values(nodes))//设定节点数组
+                    .links(links)//设定连线数组
+                    .size([width, height])//作用域的大小
+                    .linkDistance(120)//连接线长度
+                    .charge(-400)//顶点的电荷数。该参数决定是排斥还是吸引，数值越小越互相排斥
+                    .on("tick", tick)//指时间间隔，隔一段时间刷新一次画面
+                    .start();//开始转换
+
+                var svg = d3.select("body").append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                //箭头
+                var marker =
+                    svg.append("marker")
+                    //.attr("id", function(d) { return d; })
+                        .attr("id", "resolved")//设置箭头的id
+                        .attr("markerUnits", "strokeWidth")//设置为strokeWidth箭头会随着线的粗细发生变化
+                        .attr("markerUnits", "userSpaceOnUse")
+                        .attr("viewBox", "0 -5 10 10")//坐标系的区域
+                        .attr("refX", 40)//箭头坐标
+                        .attr("refY", -1)
+                        .attr("markerWidth", 12)//标识的大小
+                        .attr("markerHeight", 12)
+                        .attr("orient", "auto")//绘制方向，可设定为：auto（自动确认方向）和 角度值
+                        .attr("stroke-width", 1)//箭头宽度
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5")//箭头的路径
+                        .attr('fill', '#fb9b4d');//箭头颜色
+                //设置连接线
+                var edges_line = svg.selectAll(".edgepath")
+                    .data(force.links())
+                    .enter()
+                    .append("path")
+                    .attr({
+                        'd': function (d) { return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y },
+                        'class': 'edgepath',
+                        //'fill-opacity':0,
+                        //'stroke-opacity':0,
+                        //'fill':'blue',
+                        //'stroke':'red',
+                        'id': function (d, i) { return 'edgepath' + i; }
+                    })
+                    .style("stroke", function (d) {
+                        var lineColor;
+                        //根据关系的不同设置线条颜色   相关关系为蓝色  上下位关系为红色
+
+                        lineColor = "#000000";
+
+                        return lineColor;
+                    })
+                    .style("pointer-events", "none")
+                    .style("stroke-width", 1.5)//线条粗细
+                    .attr("marker-end", function (d) {
+                        var ifarrow;//如果是上下位关系  则显示箭头  相关关系不显示箭头
+                        if (d.rela == "resolved") {
+                            ifarrow = "url(#resolved)";
+                        }
+                        return ifarrow;
+                    });//根据箭头标记的id号标记箭头
+
+
+                var color = d3.scale.category20();
+                //圆圈
+                var circle = svg.append("g").selectAll("circle")
+                    .data(force.nodes())//表示使用force.nodes数据
+                    .enter().append("circle")
+                    .style("fill", function (node) {
+                        //圆圈背景色随机
+                        return color(node.index);
+                    })
+
+                    .attr("r", 38)//设置圆圈半径
+                    .on("click", function (node) {
+                        //单击时让连接线加粗
+                        edges_line.style("stroke-width", function (line) {
+                            console.log(line);
+                            //与之相关的连线变粗
+                            if (line.source.name == node.name || line.target.name == node.name) {
+                                return 2.5;
+                            } else {
+                                return 1.5;
+                            }
+                        });
+                        //d3.select(this).style('stroke-width',2);
+                    })
+                    .call(force.drag);//将当前选中的元素传到drag函数中，使顶点可以被拖动
+
+                var text = svg.append("g").selectAll("text")
+                    .data(force.nodes())
+                    //返回缺失元素的占位对象（placeholder），指向绑定的数据中比选定元素集多出的一部分元素。
+                    .enter()
+                    .append("text")
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", "middle")//在圆圈中加上数据
+                    .style("fill", "#000000")//文字字体颜色为灰色
+                    .attr('x', function (d) {
+                        // console.log(d.name+"---"+ d.name.length);
+                        var re_en = /[a-zA-Z]+/g;
+                        //如果是全英文，不换行
+                        if (d.name.match(re_en)) {
+                            d3.select(this).append('tspan')
+                                .attr('x', 0)
+                                .attr('y', 2)
+                                .text(function () { return d.name; });
+                        }
+                        //如果小于四个字符，不换行
+                        else if (d.name.length <= 4) {
+                            d3.select(this).append('tspan')
+                                .attr('x', 0)
+                                .attr('y', 2)
+                                .text(function () { return d.name; });
+                        } else {
+                            var top = d.name.substring(0, 4);
+                            var bot = d.name.substring(4, d.name.length);
+
+                            d3.select(this).text(function () { return ''; });
+
+                            d3.select(this).append('tspan')
+                                .attr('x', 0)
+                                .attr('y', -7)
+                                .text(function () { return top; });
+
+                            d3.select(this).append('tspan')
+                                .attr('x', 0)
+                                .attr('y', 10)
+                                .text(function () { return bot; });
+                        }
+                        //直接显示文字
+                        /*.text(function(d) {
+                        return d.name; */
+                    });
+
+                function tick() {
+                    //path.attr("d", linkArc);//连接线
+                    circle.attr("transform", transform1);//圆圈
+                    text.attr("transform", transform2);//顶点文字
+                    edges_line.attr('d', function (d) {
+                        var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
+                        return path;
+                    });
+                }
+
+
+                //设置连接线的坐标,使用椭圆弧路径段双向编码
+                function linkArc(d) {
+                    //var dx = d.target.x - d.source.x,
+                    // dy = d.target.y - d.source.y,
+                    // dr = Math.sqrt(dx * dx + dy * dy);
+                    //return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+                    //打点path格式是：Msource.x,source.yArr00,1target.x,target.y
+
+                    return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
+                }
+                //设置圆圈和文字的坐标
+                function transform1(d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                }
+                function transform2(d) {
+                    return "translate(" + (d.x) + "," + d.y + ")";
+                }
+
+
+
+            </script>
+
+        </div>
+        <!--//content-inner-->
+        <!--/sidebar-menu-->
+        <div class="sidebar-menu">
+            <header class="logo1">
+                <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a>
+            </header>
+            <div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+            <div class="menu">
+                <ul id="menu">
+                    <li><a href="/index"><i class="fa fa-tachometer"></i> <span>主页</span><div class="clearfix"></div></a></li>
+                    <li id="menu-academico"><a href="/participate"><i class="fa fa-envelope nav_icon"></i><span>分词结果</span><div class="clearfix"></div></a></li>
+                    <li><a href="/frequency"><i class="fa fa-picture-o" aria-hidden="true"></i><span>词频统计</span><div class="clearfix"></div></a></li>
+                    <li id="menu-academico"><a href="/duel"><i class="fa fa-bar-chart"></i><span>复合词拼接</span><div class="clearfix"></div></a></li>
+                    <li id="menu-academico">
+                        <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
+                    </li>
+                    <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                    <li>
+                        <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <script>
+        var toggle = true;
+
+        $(".sidebar-icon").click(function () {
+            if (toggle) {
+                $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+                $("#menu span").css({ "position": "absolute" });
+            }
+            else {
+                $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+                setTimeout(function () {
+                    $("#menu span").css({ "position": "relative" });
+                }, 400);
+            }
+
+            toggle = !toggle;
+        });
+    </script>
+    <!--js -->
+    <script src="/js/jquery.nicescroll.js"></script>
+    <script src="/js/scripts.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+    <!-- /Bootstrap Core JavaScript -->
+    <!-- morris JavaScript -->
+    <script src="/js/raphael-min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //BOX BUTTON SHOW AND CLOSE
+            jQuery('.small-graph-box').hover(function () {
+                jQuery(this).find('.box-button').fadeIn('fast');
+            }, function () {
+                jQuery(this).find('.box-button').fadeOut('fast');
+            });
+            jQuery('.small-graph-box .box-close').click(function () {
+                jQuery(this).closest('.small-graph-box').fadeOut(200);
+                return false;
+            });
+
+            //CHARTS
+            function gd(year, day, month) {
+                return new Date(year, month - 1, day).getTime();
+            }
+
+
+        });
+    </script>
+</body>
+</html>

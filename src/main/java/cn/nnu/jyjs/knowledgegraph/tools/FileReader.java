@@ -17,6 +17,12 @@ import java.io.*;
 
 /**
  * this java class is used to convert PDF/WORD/EXCEL/PPT to String
+ *      encoding in utf-8
+ *      for test
+ * -- NO USE--
+ * 迁移到web端，使用js读取文件
+ * create by wangj
+ * in 3/12/2019
  */
 public class FileReader {
 

@@ -29,3 +29,8 @@ spring:
     static-path-pattern: /**
   resources:
     static-locations: classpath:/templates/,classpath:/static/
+  data:
+    neo4j:
+      uri: http://39.108.107.28:7474
+      username: neo4j
+      password: SillyGoose4d.

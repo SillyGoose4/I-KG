@@ -111,38 +111,58 @@
                         cache: false,
                         contentType: false,
                         processData: false,
-                        success: function (json_data) {
-                            alert("恭喜你！上传成功");
+                        success: function (data) {
+                            var names = eval(data);
+                            for(var i=0; i<names.length;i++) {
+                                var name = names[i];
+                                if (i == 0) {
+                                    $('#btn-first').html('<li><a href="javascript:void(0)" onclick="function f() {' +
+                                        '   $.ajax({\n' +
+                                        '       url: \'/data/postText\',\n' +
+                                        '       data: {\'fileName\':'+name+',\'fileContent\':fileContent},\n' +
+                                        '       dataType: \'json\',\n' +
+                                        '       type: \'POST\',\n' +
+                                        '       success: function(data){\n' +
+                                        '           console.log(data);\n' +
+                                        '       }\n' +
+                                        '   })' +
+                                        '}">' + name + '</a></li>');
+                                } else {
+                                    $('#file-name-lists').append('<li><a href="javascript:void(0)" onclick="function f() {' +
+                                        '   $.ajax({\n' +
+                                        '       url: \'/data/postText\',\n' +
+                                        '       data: {\'fileName\':'+name+',\'fileContent\':fileContent},\n' +
+                                        '       dataType: \'json\',\n' +
+                                        '       type: \'POST\',\n' +
+                                        '       success: function(data){\n' +
+                                        '           console.log(data);\n' +
+                                        '       }\n' +
+                                        '   })' +
+                                        '}">' + name + '</a></li>');
+                                }
+                            }
                         }
                     });
-                    /*
-                    for (var i=0; i<fs.length; i++) {
-                        var file = fs.item(i);
-                        var fileName = file.name;
-                        alert(fileName);
-                        reader.onload = function () {
-                            console.log(data);
-                            var tObj = document.getElementById('a6_input');
-                            tObj.value = this.result;
-                            formData.append(fileName,this.result)
-                            loadFile(fileName,this.result);
-                        };
-                        reader.readAsText(file);
-                    }*/
                 }
             </script>
 
-              <div style="float:left;width:49%;" >
-                  <input type="file" name="file" multiple id="filePicker" class="auto-style8"/></div>
-                  <input type="button" class="btn active btn-dark btn-block" value = "上传文本"  onclick="show()" style="width: 10%; height: 34px;"/></div>
+                <div style="float:left;width:49%;" >
+                    <input type="file" name="file" multiple id="filePicker" class="auto-style8"/></div>
+                    <input type="button" class="btn active btn-dark btn-block" value = "上传文本"  onclick="show()" style="width: 10%; height: 34px;"/>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="btn-first">NULL</button>
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span><span class="sr-only">切换文本</span></button>
+                        <ul class="dropdown-menu" role="menu" id="file-name-lists">
+
+                        </ul>
+                    </div>
+                </div>
               <br/><br/>
-              <div id="textshow" class="textarea">
-                  <p><textarea id="a6_input" style=" height: 469px;width: 1597px;"></textarea></p>
-              </div>
-              <br/>
-                <div style="float:right;width:10%;"><input type="button" class="btn active btn-dark btn-block" value = "生成图谱"  onclick="GraphShow()" class="auto-style4"/></div> 
-               <br/><br/>
-   
+            <div style="float:right;width:10%;"><input type="button" class="btn active btn-dark btn-block" value = "生成图谱"  onclick="GraphShow()" class="auto-style4"/></div>
+            <br/><br/>
+            <div class="copyrights">
+                <p>Copyright &copy; <a href="" target="_blank">2019.NNU_JYJS_SpecialTeam302</a> All rights reserved.</p>
+            </div>
         <script>
         function GraphShow(){
                  window.location.href='/Graphshow';
@@ -163,61 +183,52 @@
 			 });
 			 
 		});
-		</script>
-
-
-<div class="copyrights">
-	 <p>Copyright &copy; <a href="" target="_blank">2019.NNU_JYJS_SpecialTeam302</a> All rights reserved.</p>
-</div>
+        </script>
 </div>
   <!--//content-inner-->
 			<!--/sidebar-menu-->
-				<div class="sidebar-menu">
-					<header class="logo1">
-						<a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> 
-					</header>
-						<div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
-                    <div class="menu">
-                    <ul id="menu">
-                        <li><a href="/index"><i class="fa fa-tachometer"></i> <span>主页</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico"><a href="/participate"><i class="fa fa-envelope nav_icon"></i><span>分词结果</span><div class="clearfix"></div></a></li>
-                        <li><a href="/frequency"><i class="fa fa-picture-o" aria-hidden="true"></i><span>词频统计</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico"><a href="/duel"><i class="fa fa-bar-chart"></i><span>复合词拼接</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico">
-                            <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
-                        </li>
-                        <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico">
-                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
-                        </li>
-                        <li>
-                            <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
-                        </li>
-                    </ul>
-                </div>
-							  </div>
-							  <div class="clearfix"></div>		
-							</div>
-							<script>
-							var toggle = true;
-										
-							$(".sidebar-icon").click(function() {                
-							  if (toggle)
-							  {
-								$(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
-								$("#menu span").css({"position":"absolute"});
-							  }
-							  else
-							  {
-								$(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
-								setTimeout(function() {
-								  $("#menu span").css({"position":"relative"});
-								}, 400);
-							  }
-											
-											toggle = !toggle;
-										});
-							</script>
+       <div class="sidebar-menu">
+           <header class="logo1">
+               <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a>
+           </header>
+           <div style="border-top:1px ridge rgba(255, 255, 255, 0.15)"></div>
+           <div class="menu">
+               <ul id="menu">
+                   <li><a href="/index"><i class="fa fa-tachometer"></i> <span>主页</span><div class="clearfix"></div></a></li>
+                   <li id="menu-academico"><a href="/participate"><i class="fa fa-envelope nav_icon"></i><span>分词结果</span><div class="clearfix"></div></a></li>
+                   <li><a href="/frequency"><i class="fa fa-picture-o" aria-hidden="true"></i><span>词频统计</span><div class="clearfix"></div></a></li>
+                   <li id="menu-academico"><a href="/duel"><i class="fa fa-bar-chart"></i><span>复合词拼接</span><div class="clearfix"></div></a></li>
+                   <li id="menu-academico">
+                       <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
+                   </li>
+                   <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                   <li>
+                       <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                   </li>
+               </ul>
+           </div>
+       </div>
+       <div class="clearfix"></div>
+   </div>
+   <script>
+       var toggle = true;
+       $(".sidebar-icon").click(function() {
+           if (toggle)
+           {
+               $(".page-container").addClass("sidebar-collapsed").removeClass("sidebar-collapsed-back");
+               $("#menu span").css({"position":"absolute"});
+           }
+           else
+           {
+               $(".page-container").removeClass("sidebar-collapsed").addClass("sidebar-collapsed-back");
+               setTimeout(function() {
+                   $("#menu span").css({"position":"relative"});
+               }, 400);
+           }
+
+           toggle = !toggle;
+       });
+   </script>
 <!--js -->
 <script src="/js/jquery.nicescroll.js"></script>
 <script src="/js/scripts.js"></script>

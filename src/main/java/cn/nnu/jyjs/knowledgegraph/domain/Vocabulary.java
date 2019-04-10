@@ -1,7 +1,7 @@
 package cn.nnu.jyjs.knowledgegraph.domain;
 
 /**
- * 词类，包括词名、词描述、频率、所属类、
+ * 词类，包括词名、词描述、频率、所属类、tf-idf值
  */
 public class Vocabulary {
 	
@@ -10,7 +10,9 @@ public class Vocabulary {
 	private String desciption;
 	private int classid;
 	private int dicid;
-	
+	private String[] particle;
+	private String property;
+	private double tfidf;
 	public Vocabulary(String _NatureStr, int frequence) {
 		this.NatureStr = _NatureStr;
 		this.frequence = frequence;
@@ -44,6 +46,13 @@ public class Vocabulary {
 		return frequence;
 	}
 
+	public String getProperty() {
+		return property;
+	}
+
+	public void setProperty(String property) {
+		this.property = property;
+	}
 
 	public String getDesciption() {
 		return desciption;
@@ -63,6 +72,22 @@ public class Vocabulary {
 
 	public void setDicid(int dicid) {
 		this.dicid = dicid;
+	}
+
+	public String[] getParticle() {
+		return particle;
+	}
+
+	public void setParticle(String[] particle) {
+		this.particle = particle;
+	}
+
+	public double getTfidf() {
+		return tfidf;
+	}
+
+	public void setTfidf(double tfidf) {
+		this.tfidf = tfidf;
 	}
 
 	@Override

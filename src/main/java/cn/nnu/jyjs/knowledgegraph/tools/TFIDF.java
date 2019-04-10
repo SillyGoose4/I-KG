@@ -3,6 +3,8 @@ package cn.nnu.jyjs.knowledgegraph.tools;
 import cn.nnu.jyjs.knowledgegraph.domain.Assmble;
 import cn.nnu.jyjs.knowledgegraph.domain.FileContent;
 import cn.nnu.jyjs.knowledgegraph.domain.Vocabulary;
+import net.sf.json.JSONArray;
+import org.apache.log4j.Logger;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -12,7 +14,9 @@ import java.util.Map;
 /**
  * HOW TO USE：
  *      there are many files,READ TO STRING BUFFER,and ALL to use ParticipleProcessing.processing(string).
- *
+ * create by wangj
+ * in 3/12/2019
+ * LATEST 3/25: add set file by map.
  */
 public class TFIDF {
 
@@ -21,13 +25,15 @@ public class TFIDF {
      * @param fileName_Content
      * @return
      */
-    public static List<FileContent> getC(Map<String, String> fileName_Content){
+    public static List<FileContent> setFileByMap(Map<String, String> fileName_Content){
         List<FileContent> fl = new LinkedList<>();
         for(Map.Entry<String,String> entry : fileName_Content.entrySet()){
             FileContent fi = new FileContent();
-            Assmble as =ParticipleProcessing.processing(entry.getValue());
-            fi.setWords(as.getWords());
-            ParticipleProcessing.duelJoint(as);
+            List<Vocabulary> lists = new LinkedList<>();
+            Assmble as =ParticipleProcessing.processing(entry.getValue()); // 分词
+            lists.addAll(as.getWords());
+            lists.addAll(ParticipleProcessing.duelJoint(as,_thres));// 复合词拼接(二元)
+            fi.setWords(as.getWords()); // 存储词
             fi.setStr(new StringBuffer(entry.getValue()));
             fi.setFilename(entry.getKey());
             fl.add(fi);
@@ -39,7 +45,9 @@ public class TFIDF {
     // 所有文件转换成StringBuffer存入该列表
     private static Map<String,FileContent> files;
 
-    private static double threshold = 5;
+    private static double _thres = 5;   // 复合词拼接阈值
+
+    private static double threshold = 5;    // TFIDF阈值
 
     /**
      * building index from files
@@ -83,16 +91,49 @@ public class TFIDF {
         return Math.log(1.0*(D+1)/Dx);
     }
 
+    /**
+     * 直接从标题抽效果更好
+     */
+    public static List<Vocabulary> extractFromTitle(String title){
+        List<Vocabulary> vocabularies = new LinkedList<>();
+        JSONArray jsonArray = JSONArray.fromObject(BaiduApi.request(title));
+
+        return vocabularies;
+    }
+
+    public static void setThreshold(double _threshold){
+        threshold = _threshold;
+    }
+
     public static List<Vocabulary> CalcKey(String fileName){
         FileContent fileContent = files.get(fileName);
-        List<Vocabulary> res = fileContent.getWords();
+        List<Vocabulary> res = new LinkedList<>();
         for (Vocabulary v: fileContent.getWords()){
             // TF * IDF
             double tfidf = v.getFrequence() * CalcOneIDF(v.getNatureStr());
             if(tfidf >= threshold && v.getNatureStr().length() > 1){
+                res.add(v);
+                v.setTfidf(tfidf);
                 System.out.println("Word "+v.getNatureStr()+",Calculate result:"+tfidf);
             }
         }
         return res;
     }
+
+    public static double get_thres() {
+        return _thres;
+    }
+
+    public static double getThreshold() {
+        return threshold;
+    }
+
+    public static void set_thres(double _thres) {
+        TFIDF._thres = _thres;
+    }
+
+    public static void setFiles(Map<String, FileContent> files) {
+        TFIDF.files = files;
+    }
+
 }

@@ -6,6 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 
+/**
+ * --NO USE--
+ * database operate util
+ * create by wangj
+ * in 3/12/2019
+ */
 public class DBUnits {
  
 	private static String URL="";// URL指向要访问的数据库名

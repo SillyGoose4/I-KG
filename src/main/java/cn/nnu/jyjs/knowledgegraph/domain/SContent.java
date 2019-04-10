@@ -1,8 +1,6 @@
 package cn.nnu.jyjs.knowledgegraph.domain;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SContent {
     private static SContent instance;
@@ -30,10 +28,26 @@ public class SContent {
             c.put(fileName,content);
         }
     }
-    public static String getContent(String sessionId){
-        return contents.get(sessionId).getStr();
+    public static Map<String,String> getMap(String sessionId){
+        return contents.get(sessionId);
     }
-    public static String getFileName(String sessionId){
-        return contents.get(sessionId).getFilename();
+    public static String getContent(String sessionId, String name){
+        return contents.get(sessionId).get(name);
+    }
+    /*
+    public static String getContent(String sessionId){
+        return contents.get(sessionId);
+    }*/
+    public static List<String> getFileName(String sessionId){
+        Set<String> strings=contents.get(sessionId).keySet();
+        if(strings == null){
+            return null;
+        }
+        List<String> list = new LinkedList<>();
+        for (String s:
+             strings) {
+            list.add(s);
+        }
+        return list;
     }
 }

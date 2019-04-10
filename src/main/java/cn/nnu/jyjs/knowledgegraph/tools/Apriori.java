@@ -5,39 +5,44 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 关系抽取算法
+ * create by wangj
+ * in 3/12/2019
+ *
+ */
 public class Apriori {
     //frequent item sets
-    private List<List<String>> D = new LinkedList<>();
+    private static List<List<String>> D = new LinkedList<>();
 
-    private Map<String, Integer> C = new HashMap<>();
+    private static Map<String, Integer> C = new HashMap<>();
 
-    private Map<String, Integer> L = new HashMap<>();
+    private static Map<String, Integer> L = new HashMap<>();
 
-    private double MIN_SUPPORT = 0.06;
+    private static double MIN_SUPPORT = 0.06;
 
-    private int SIZE = 0;
+    private static int SIZE = 0;
+
+    public Apriori(){}
 
     public Apriori(List<List<String>> D){
         this.D = D;
     }
 
-    public void setMinSupport(double minSupport){
-        this.MIN_SUPPORT = minSupport;
+    public static void setMinSupport(double minSupport){
+        MIN_SUPPORT = minSupport;
     }
 
-    public void setData(List<List<String>> Data){
-        this.D = Data;
-        for (List<String> l:
-             Data) {
-            this.SIZE += l.size();
-        }
+    public static void setData(List<List<String>> Data){
+        D = Data;
+        SIZE = D.size();
     }
 
     /**
      * get candidate set
      * @return
      */
-    public Map<String, Integer> getC1(){
+    public static Map<String, Integer> getC1(){
         for (List<String> it: D) {
             for(String s: it){
                 if(C.containsKey(s)){
@@ -57,17 +62,32 @@ public class Apriori {
      * if you want to change min_support,PLEASE USE [setMinSupport(double min_support)] this function.
      * @return
      */
-    public Map<String, Integer> getL1(){
+    public static Map<String, Integer> getL1(){
         int Counts = (int) (MIN_SUPPORT * SIZE);
+        System.out.println(Counts);
         for (Map.Entry e :
                 C.entrySet()) {
             if((int)e.getValue()>Counts){
                 L.put((String)e.getKey(),(int)e.getValue());
+                System.out.println(e.getKey()+"\t"+e.getValue());
             }
         }
         return L;
     }
 
+    public static Map<String, Integer> calc(List<List<String>> Data){
+        setData(Data);
+        Map<String,Integer> C = getC1();
+        Map<String,Integer> L = getL1();
+        return L;
+    }
+
+
+    /**
+     * 以下无用
+     * @param list
+     * @return
+     */
     public List<String> sort(List<String> list){
         quickSort(0, list.size() - 1,list);
         return list;

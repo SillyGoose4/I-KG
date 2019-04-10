@@ -180,7 +180,7 @@
                         .style("stroke-width", 1.5)//线条粗细
                         .attr("marker-end", function (d) {
                             var ifarrow;//如果是上下位关系  则显示箭头  相关关系不显示箭头
-                            if (d.rela == "上下位关系") {
+                            if (d.rela == "resolved") {
                                 ifarrow = "url(#resolved)";
                             }
                             return ifarrow;

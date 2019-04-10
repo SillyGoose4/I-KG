@@ -58,6 +58,18 @@
                         var f = document.getElementById("filePicker").files[0];
                         reader.readAsText(f);
                     }
+                    function getContent(fileName) {
+                        alert(fileName);
+                        $.ajax({
+                            url: '/data/participate',
+                            type: 'get',
+                            data: {'fileName':fileName},
+                            success: function (data) {
+                                $('#a6_input').val(data);
+                                alert(data);
+                            }
+                        })
+                    }
                 </script>
                 <!--文本框-->
 
@@ -108,9 +120,6 @@
                             <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
                         </li>
                         <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico">
-                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
-                        </li>
                         <li>
                             <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                         </li>
@@ -162,7 +171,14 @@
                 function gd(year, day, month) {
                     return new Date(year, month - 1, day).getTime();
                 }
+                $.ajax({
+                    url: "/data/relationship",
+                    data: {},
+                    dataType: "json",
+                    success: function () {
 
+                    }
+                })
 
             });
         </script>

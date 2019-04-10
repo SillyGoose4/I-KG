@@ -10,7 +10,7 @@
     <link href="/css/bootstrap.min.css" rel='stylesheet' type='text/css' />
     <!-- Custom CSS -->
     <link href="/css/style.css" rel='stylesheet' type='text/css' />
-    <link rel="stylesheet" href="../static/css/lightbox.css">
+    <link rel="stylesheet" href="/css/lightbox.css">
     <!-- Graph CSS -->
     <link href="/css/font-awesome.css" rel="stylesheet">
     <!-- jQuery -->
@@ -58,11 +58,30 @@
                         var f = document.getElementById("filePicker").files[0];
                         reader.readAsText(f);
                     }
+                    function getContent(fileName) {
+                        alert(fileName);
+                        $.ajax({
+                            url: '/data/participate',
+                            type: 'get',
+                            data: {'fileName':fileName},
+                            success: function (data) {
+                                $('#a6_input').val(data);
+                                alert(data);
+                            }
+                        })
+                    }
                 </script>
                 <!--文本框-->
 
 
                 <br /><br />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="btn-first">NULL</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span><span class="sr-only">切换文本</span></button>
+                    <ul class="dropdown-menu" role="menu" id="file-name-lists">
+
+                    </ul>
+                </div>
                 <div id="textshow" class="textarea">
                     <textarea id="a6_input" style="height: 230px;width: 1245px; " disabled></textarea>
                 </div>
@@ -70,8 +89,7 @@
 
 
                  <p style="color: #3399FF;" class="address-text">*分词：
-                    文本预处理的主要操作是分词，分词是将txt文本中的内容利用分词工具切分成独立的词，本文选择ANSJ分词工具，并进行词性标注。
-</p>
+                    文本预处理的主要操作是分词，分词是将txt文本中的内容利用分词工具切分成独立的词，本文选择ANSJ分词工具，并进行词性标注。</p>
                 <script>
                     $(document).ready(function () {
                         var navoffeset = $(".header-main").offset().top;
@@ -107,9 +125,6 @@
                             <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
                         </li>
                         <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico">
-                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
-                        </li>
                         <li>
                             <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                         </li>
@@ -161,12 +176,20 @@
                 function gd(year, day, month) {
                     return new Date(year, month - 1, day).getTime();
                 }
+
                 $.ajax({
-                    url: '/data/participate',
-                    type: 'get',
-                    success: function(data){
-                        $('#a6_input').val(data);
-                        alert(data);
+                    url: '/data/fileName',
+                    async: false,
+                    success: function (data) {
+                        var names = eval(data);
+                        for(var i=0; i<names.length;i++) {
+                            var name = names[i];
+                            if (i == 0) {
+                                $('#btn-first').html('<li><a href="javascript:void(0)" onclick="getContent(' + '\'' + name +'\'' +')">' + name + '</a></li>');
+                            } else {
+                                $('#file-name-lists').append('<li><a href="javascript:void(0)" onclick="getContent('+ '\'' + name +'\'' +')">' + name + '</a></li>');
+                            }
+                        }
                     }
                 })
 

@@ -59,11 +59,32 @@
                         var f = document.getElementById("filePicker").files[0];
                         reader.readAsText(f);
                     }
+                    function getContent(fileName) {
+                        alert(fileName);
+                        $.ajax({
+                            url: '/data/tfidf',
+                            type: 'get',
+                            data: {'fileName':fileName},
+                            success: function (data) {
+                                var res = eval(data);
+                                for(var i = 0; i<res.length;i++){
+                                    $('#a6_input').append(res[i].natureStr+"\t"+res[i].tfidf+"\n");
+                                }
+                            }
+                        })
+                    }
                 </script>
                 <!--文本框-->
 
 
                 <br /><br />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="btn-first">NULL</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span><span class="sr-only">切换文本</span></button>
+                    <ul class="dropdown-menu" role="menu" id="file-name-lists">
+
+                    </ul>
+                </div>
                 <div id="textshow" class="textarea">
                     <textarea id="a6_input" style="height: 230px;width: 1245px; "></textarea>
                 </div>
@@ -108,10 +129,6 @@
                             <a href="/tfidf"><i class="fa fa-list-ul" aria-hidden="true"></i><span>关键词提取</span> <div class="clearfix"></div></a>
                         </li>
                         <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
-                        <li id="menu-academico">
-                            <a href="/textmatch"><i class="fa fa-cogs" aria-hidden="true"></i><span> 上下位关系</span><div class="clearfix"></div></a>
-                        </li>
-
                         <li>
                             <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                            
@@ -165,11 +182,19 @@
                     return new Date(year, month - 1, day).getTime();
                 }
                 $.ajax({
-                    url: '/data/tfidf',
+                    url: '/data/fileName',
                     type: 'get',
-                    success: function(data){
-                        $('#a6_input').val(data);
-                        alert(data);
+                    dataType: 'JSON',
+                    success: function (data) {
+                        var names = eval(data);
+                        for(var i=0; i<names.length;i++) {
+                            var name = names[i];
+                            if (i == 0) {
+                                $('#btn-first').html('<li><a href="javascript:void(0)" onclick="getContent(' + '\'' + name +'\'' +')">' + name + '</a></li>');
+                            } else {
+                                $('#file-name-lists').append('<li><a href="javascript:void(0)" onclick="getContent('+ '\'' + name +'\'' +')">' + name + '</a></li>');
+                            }
+                        }
                     }
                 })
 

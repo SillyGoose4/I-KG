@@ -2,6 +2,7 @@ package cn.nnu.jyjs.knowledgegraph.domain;
 
 import org.ansj.domain.Term;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,20 +16,10 @@ import java.util.Map;
  */
 public class Assmble {
 
-    private List<Term> terms;
 
     private Map<String, Vocabulary> maps; //依据词名构建的词典
 
-    private List<Vocabulary> words;
-
-
-    public List<Term> getTerms() {
-        return terms;
-    }
-
-    public void setTerms(List<Term> terms) {
-        this.terms = terms;
-    }
+    private List<Vocabulary> before;
 
     public Map<String, Vocabulary> getMaps() {
         return maps;
@@ -38,11 +29,21 @@ public class Assmble {
         this.maps = maps;
     }
 
+    // 去重后词
     public List<Vocabulary> getWords() {
-        return words;
+        List<Vocabulary> list = new LinkedList<>();
+        for (Map.Entry e:
+             maps.entrySet()) {
+            list.add((Vocabulary) e.getValue());
+        }
+        return list;
+    }
+    // 原词
+    public void setBefore(List<Vocabulary> beforeWords) {
+        this.before = beforeWords;
     }
 
-    public void setWords(List<Vocabulary> words) {
-        this.words = words;
+    public List<Vocabulary> getBefore() {
+        return before;
     }
 }
