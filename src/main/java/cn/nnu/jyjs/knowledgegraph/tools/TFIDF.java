@@ -47,7 +47,7 @@ public class TFIDF {
 
     private static double _thres = 5;   // 复合词拼接阈值
 
-    private static double threshold = 5;    // TFIDF阈值
+    private static double threshold = 2.5;    // TFIDF阈值
 
     /**
      * building index from files
@@ -105,12 +105,15 @@ public class TFIDF {
         threshold = _threshold;
     }
 
-    public static List<Vocabulary> CalcKey(String fileName){
+    public static List<Vocabulary> CalcKey(String fileName, Double weight){
         FileContent fileContent = files.get(fileName);
         List<Vocabulary> res = new LinkedList<>();
+        int size = fileContent.getWords().size();
+        if(weight == null)
+            weight = 1.15;
         for (Vocabulary v: fileContent.getWords()){
             // TF * IDF
-            double tfidf = v.getFrequence() * CalcOneIDF(v.getNatureStr());
+            double tfidf = v.getFrequence()*1.0 /size * weight * CalcOneIDF(v.getNatureStr()) * 100;
             if(tfidf >= threshold && v.getNatureStr().length() > 1){
                 res.add(v);
                 v.setTfidf(tfidf);

@@ -87,13 +87,13 @@ public class ParticipleProcessing {
         // calculate  whether vocabulary's frequence reach threshold value
         // filter
         for (Vocabulary v: duelCondidate) {
-            double fre = 1.0*v.getFrequence();
+            double fre = 1.0*v.getFrequence()/sumDuel;
             double[] wordFre = {0,0};
             for(int i=0; i<2; i++){
                 wordFre[i] = 1.0*as.getMaps().get(v.getParticle()[i]).getFrequence()/sumDuel;
                 System.err.println(wordFre[i]);
             }
-            if(!clotting(wordFre[0],wordFre[1],v.getFrequence(),_thres*sumDuel)){
+            if(!clotting(wordFre[0],wordFre[1],fre,_thres)){
                 System.out.println(" 去除拼接词 ： " + v.getNatureStr() + "    " + fre);
                 continue;
             }

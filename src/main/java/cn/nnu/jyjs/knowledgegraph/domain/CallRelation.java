@@ -10,7 +10,7 @@ public class CallRelation {
     }
 
 
-    public CallRelation(NodeEntity start, NodeEntity end, Long count) {
+    public CallRelation(Node start, Node end, Long count) {
         this();
         this.startNode = start;
         this.endNode = end;
@@ -47,14 +47,14 @@ public class CallRelation {
      */
 
     @StartNode
-    private NodeEntity startNode;
+    private Node startNode;
 
     /**
      * 定义关系的终止节点 == EndNode
      */
 
     @EndNode
-    private NodeEntity endNode;
+    private Node endNode;
 
 
     /**
@@ -64,19 +64,19 @@ public class CallRelation {
     @Property(name = "count")
     private Long count;
 
-    public NodeEntity getStartNode() {
+    public Node getStartNode() {
         return startNode;
     }
 
-    public void setStartNode(NodeEntity startNode) {
+    public void setStartNode(Node startNode) {
         this.startNode = startNode;
     }
 
-    public NodeEntity getEndNode() {
+    public Node getEndNode() {
         return endNode;
     }
 
-    public void setEndNode(NodeEntity endNode) {
+    public void setEndNode(Node endNode) {
         this.endNode = endNode;
     }
 

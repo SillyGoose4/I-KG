@@ -89,7 +89,9 @@
 
 
                  <p style="color: #3399FF;" class="address-text">*分词：
-                    文本预处理的主要操作是分词，分词是将txt文本中的内容利用分词工具切分成独立的词，本文选择ANSJ分词工具，并进行词性标注。</p>
+                    文本预处理的主要操作是分词，分词是将txt文本中的内容利用分词工具切分成独立的词，本文选择ANSJ分词工具，并进行词性标注。
+                     API调用方式：<b>需要调用上传文件API</b> 方法：GET，参数：fileName， url：39.108.107.28:8080/data/participle，返回数据：json
+                 </p>
                 <script>
                     $(document).ready(function () {
                         var navoffeset = $(".header-main").offset().top;
@@ -125,6 +127,12 @@
                             <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
                         </li>
                         <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                        <li>
+                            <a href="/PhysicsShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-物理</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
+                        <li>
+                            <a href="/MathShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-数学</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
                         <li>
                             <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                         </li>

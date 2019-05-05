@@ -1,18 +1,20 @@
 package cn.nnu.jyjs.knowledgegraph.domain;
 
+import java.util.Objects;
+
 /**
  * 词类，包括词名、词描述、频率、所属类、tf-idf值
  */
 public class Vocabulary {
 	
-	private String NatureStr;
-	private int frequence;
-	private String desciption;
-	private int classid;
-	private int dicid;
-	private String[] particle;
-	private String property;
-	private double tfidf;
+	private String NatureStr;		//名称
+	private int frequence;			//频数
+	private String desciption;		//描述
+	private int classid;			//所属类别id
+	private int dicid;				//所属字典id
+	private String[] particle;		//子串
+	private String property;		//属性
+	private double tfidf;			//tf-idf值
 	public Vocabulary(String _NatureStr, int frequence) {
 		this.NatureStr = _NatureStr;
 		this.frequence = frequence;
@@ -93,5 +95,21 @@ public class Vocabulary {
 	@Override
 	public String toString() {
 		return "NatureStr : "+NatureStr+"\t"+"频率 : "+frequence;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Vocabulary)) return false;
+		Vocabulary that = (Vocabulary) o;
+		return classid == that.classid &&
+				dicid == that.dicid &&
+				Double.compare(that.tfidf, tfidf) == 0 &&
+				NatureStr.equals(that.NatureStr);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(NatureStr, classid, dicid, tfidf);
 	}
 }

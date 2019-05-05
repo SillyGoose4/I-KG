@@ -20,7 +20,7 @@ import java.io.*;
  *      encoding in utf-8
  *      for test
  * -- NO USE--
- * 迁移到web端，使用js读取文件
+ * -- 迁移到web端，使用js读取文件 --
  * create by wangj
  * in 3/12/2019
  */

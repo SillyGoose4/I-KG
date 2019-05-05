@@ -60,13 +60,31 @@
                         reader.readAsText(f);
                     }
                     function getContent(fileName) {
-                        alert(fileName);
+                        getByTFIDF(fileName);
+                        getByTextRank(fileName);
+                    }
+                    function getByTextRank(fileName) {
+                        $.ajax({
+                            url: '/data/textRank',
+                            type: 'get',
+                            data: {'fileName':fileName},
+                            success: function (data) {
+                                var res = eval(data);
+                                $('#a6_input').html("");
+                                for(var i = 0; i<res.length;i++){
+                                    $('#a6_input').append(res[i].natureStr+"\t"+res[i].tfidf+"\n");
+                                }
+                            }
+                        })
+                    }
+                    function getByTFIDF(fileName) {
                         $.ajax({
                             url: '/data/tfidf',
                             type: 'get',
                             data: {'fileName':fileName},
                             success: function (data) {
                                 var res = eval(data);
+                                $('#a6_input').html("");
                                 for(var i = 0; i<res.length;i++){
                                     $('#a6_input').append(res[i].natureStr+"\t"+res[i].tfidf+"\n");
                                 }
@@ -93,7 +111,13 @@
                     ，即文本特征选择，通常采用TFIDF、互信息、卡方检验等方法，TFIDF方法常用于识别文档中的重要关键词，适用于网页文本计算，
                     是比较经典的方法。TFIDF的计算公式如式：TFIDF(i)=TF(i)*IDF(i)。 TF=某个概念在文档中出现的频次/文档中的总词数，
                     IDF=log2((1+文档总数)/包含某个概念的文档数量)，TFIDF表示词频与逆文档频率的乘积。其中TF表示词频，如果一个词汇在网页中出现的频率越高，表示其重要程度越高。
-           </p>
+                </p>
+                <div>
+                    <h4>基于TextRank的实体抽取</h4>
+                    <table id="result">
+
+                    </table>
+                </div>
                 <script>
                     $(document).ready(function () {
                         var navoffeset = $(".header-main").offset().top;
@@ -129,6 +153,12 @@
                             <a href="/tfidf"><i class="fa fa-list-ul" aria-hidden="true"></i><span>关键词提取</span> <div class="clearfix"></div></a>
                         </li>
                         <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                        <li>
+                            <a href="/PhysicsShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-物理</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
+                        <li>
+                            <a href="/MathShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-数学</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                        </li>
                         <li>
                             <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                            

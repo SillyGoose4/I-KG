@@ -20,7 +20,7 @@ public class KnowledgegraphApplication {
     @Bean
     public org.neo4j.ogm.config.Configuration configuration() {
         org.neo4j.ogm.config.Configuration configuration = new org.neo4j.ogm.config.Configuration.Builder()
-                .uri("http://localhost:7474")
+                .uri("http://39.108.107.28:7474")
                 .credentials("neo4j", "SillyGoose4d.")
                 .build();
         return configuration;

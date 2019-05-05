@@ -1,14 +1,17 @@
 package cn.nnu.jyjs.knowledgegraph.controller;
 
-import cn.nnu.jyjs.knowledgegraph.domain.Assmble;
-import cn.nnu.jyjs.knowledgegraph.domain.Graph;
-import cn.nnu.jyjs.knowledgegraph.domain.SContent;
-import cn.nnu.jyjs.knowledgegraph.domain.Vocabulary;
+import cn.nnu.jyjs.knowledgegraph.Interface.VocabularySort;
+import cn.nnu.jyjs.knowledgegraph.domain.*;
 import cn.nnu.jyjs.knowledgegraph.service.Beans;
+import cn.nnu.jyjs.knowledgegraph.service.NodeRepository;
 import cn.nnu.jyjs.knowledgegraph.tools.Apriori;
 import cn.nnu.jyjs.knowledgegraph.tools.ParticipleProcessing;
 import cn.nnu.jyjs.knowledgegraph.tools.TFIDF;
+import com.hankcs.hanlp.HanLP;
 import net.sf.json.JSONArray;
+import org.ansj.app.keyword.KeyWordComputer;
+import org.ansj.app.keyword.Keyword;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +19,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * data controller, all request return json data.
@@ -27,6 +27,9 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/data/")
 public class DataController {
+
+    @Autowired
+    NodeRepository nodeRepo;
 
     /**
      * for test
@@ -107,6 +110,11 @@ public class DataController {
         return json.toString();
     }
 
+    /**
+     * 只能处理utf-8 纯文本
+     * @param request
+     * @return
+     */
     private Map<String, String> getFile(HttpServletRequest request){
         try {
             Map<String, String> name_content = new LinkedHashMap<>();
@@ -164,7 +172,9 @@ public class DataController {
         String content = SContent.getContent(request.getSession().getId(),fileName);
         Assmble assmble = ParticipleProcessing.processing(content);
         List<String> words = new LinkedList<>();
-        for(Vocabulary vocabulary : assmble.getWords()){
+        List<Vocabulary> vocabularies = assmble.getWords().subList(0,assmble.getWords().size());
+        vocabularies.sort(new VocabularySort());
+        for(Vocabulary vocabulary : vocabularies){
             words.add(vocabulary.getNatureStr());
             words.add(": "+vocabulary.getFrequence());
             words.add("\n");
@@ -188,7 +198,7 @@ public class DataController {
                            HttpServletRequest request){
         String content = SContent.getContent(request.getSession().getId(),fileName);
         TFIDF.setFileByMap(SContent.getMap(request.getSession().getId()));
-        JSONArray jsonArray = JSONArray.fromObject(_t(_threa,fileName));
+        JSONArray jsonArray = JSONArray.fromObject(_t(_threa,fileName,content));
         return jsonArray.toString();
     }
 
@@ -196,26 +206,34 @@ public class DataController {
     public String calcKey(@RequestParam(value = "fileName") String sName,
                           @RequestParam(value = "_threahold",required = false) Double _threa,
                           HttpServletRequest request){
+        String content = SContent.getContent(request.getSession().getId(),sName);
         Map<String,String> map = getFile(request);
         TFIDF.setFileByMap(map);
-        JSONArray jsonArray = JSONArray.fromObject(_t(_threa,sName));
+        JSONArray jsonArray = JSONArray.fromObject(_t(_threa,sName,content));
         return jsonArray.toString();
     }
 
-    private List<Vocabulary> _t(Double _threa, String sName){
+    private List<Vocabulary> _t(Double _threa, String sName, String content){
         if(_threa != null){
             TFIDF.setThreshold(_threa);
         }
-        List<Vocabulary> lists =TFIDF.CalcKey(sName);
-
+        KeyWordComputer kwc = new KeyWordComputer(5);
+        Collection<Keyword> result = kwc.computeArticleTfidf(sName, content);
+        List<Vocabulary> lists =TFIDF.CalcKey(sName,null);
+        for(Keyword k:result){
+            Vocabulary v = new Vocabulary();
+            v.setNatureStr(k.getName());
+            lists.add(v);
+        }
+        addGraphNode(lists);
         return lists;
     }
 
-    private Map<String, Integer> _link(Double _threa, List<String> fileName){
+    private List<List<Vocabulary>> _link(Double _threa, List<String> fileName, HttpServletRequest request){
         List<List<String>> d = new LinkedList<>();
         for (String s:
              fileName) {
-            List<Vocabulary> vocabularies = _t(_threa, s);
+            List<Vocabulary> vocabularies = _t(_threa, s,SContent.getContent(request.getSession().getId(),s));
             List<String> keys = new LinkedList<>();
             for (Vocabulary v:
                  vocabularies) {
@@ -223,15 +241,53 @@ public class DataController {
             }
             d.add(keys);
         }
-        return Apriori.calc(d);
+        List<List<Vocabulary>> map = Apriori.calc(d);
+
+        return map;
+
+    }
+
+    private void addGraphNode(List<Vocabulary> vocabularies){
+        for(Vocabulary v:vocabularies){
+            nodeRepo.save(new Node(v));
+        }
+    }
+
+    private void addGraphLink(List<List<Vocabulary>> link){
+        for(List<Vocabulary> ls : link){
+            Node f = nodeRepo.findByNatureStr(ls.get(0).getNatureStr());
+            for(Vocabulary v:ls){
+                Node n = nodeRepo.findByNatureStr(v.getNatureStr());
+                if(!v.getNatureStr().equals(f.getNatureStr())){
+                    f.addRelationship(n);
+                }
+            }
+        }
+    }
+
+    private void find(){
 
     }
 
     @RequestMapping(value = "relationship")
     public String relationship(@RequestParam(value = "_threa",required = false) Double _threa
                             ,HttpServletRequest request){
-
-        JSONArray jsonArray = JSONArray.fromObject(_link(_threa,SContent.getFileName(request.getSession().getId())));
+        List<List<Vocabulary>> ls=_link(_threa,SContent.getFileName(request.getSession().getId()),request);
+        addGraphLink(ls);
+        JSONArray jsonArray = JSONArray.fromObject(ls);
         return jsonArray.toString();
     }
+
+    @RequestMapping(value = "textRank")
+    public String getWordsByTextRank(@RequestParam(value = "fileName") String fileName,
+                                     @RequestParam(value = "size", required = false) Integer size,
+                                     HttpServletRequest request){
+        if(size == null)
+            size = 6;
+        String content = SContent.getContent(request.getSession().getId(),fileName);
+        List<String> keywords = HanLP.extractKeyword(content,size);
+        JSONArray jsonArray = JSONArray.fromObject(keywords);
+        return jsonArray.toString();
+    }
+
 }

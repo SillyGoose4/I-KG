@@ -52,7 +52,7 @@
             <!--header start here-->
             <div class="header-main">
                 <p style="text-align:center; color: #1B93E1;font-size:35px;" >
-                    <img alt="" class="auto-style3" src="../static/images/logo.png" style="opacity:0.75;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i-KG 基础教育知识图谱自动生成工具</p>
+                    <img alt="" class="auto-style3" src="/static/images/logo.png" style="opacity:0.75;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i-KG 基础教育知识图谱自动生成工具</p>
 
                 <div class="clearfix"> </div>
             </div>
@@ -60,7 +60,8 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">知识图谱</a> <i class="fa fa-angle-right"></i></li>
             </ol>
-
+            <br /><br/>
+            <div id="_convas"></div>
             <script type="text/javascript">
                 function show() {
                     var reader = new FileReader();
@@ -121,8 +122,8 @@
                     link.target = nodes[link.target] || (nodes[link.target] = { name: link.target });
                 });
 
-                var width = 1200,
-                    height = 600;
+                var width = 800,
+                    height =800;
 
                 var force = d3.layout.force()//layout将json格式转化为力学图可用的格式
                     .nodes(d3.values(nodes))//设定节点数组
@@ -133,7 +134,7 @@
                     .on("tick", tick)//指时间间隔，隔一段时间刷新一次画面
                     .start();//开始转换
 
-                var svg = d3.select("body").append("svg")
+                var svg = d3.select("#_convas").append("svg")
                     .attr("width", width)
                     .attr("height", height);
 
@@ -309,6 +310,12 @@
                         <a href="/tfidf"><i1 class="fa fa-list-ul" aria-hidden="true"></i1><span>关键词提取</span> <div class="clearfix"></div></a>
                     </li>
                     <li id="menu-academico"><a href="/apriori"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><span>相关关系</span><div class="clearfix"></div></a></li>
+                    <li>
+                        <a href="/PhysicsShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-物理</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                    </li>
+                    <li>
+                        <a href="/MathShow"><i class="fa fa-check-square-o nav_icon"></i><span>现有图谱展示-数学</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
+                    </li>
                     <li>
                         <a href="/about"><i class="fa fa-check-square-o nav_icon"></i><span>关于</span> <span class="fa fa-angle-right" style="float: right"></span><div class="clearfix"></div></a>
                     </li>
