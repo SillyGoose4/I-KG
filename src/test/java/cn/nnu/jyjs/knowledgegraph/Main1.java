@@ -74,13 +74,13 @@ public class Main1 {
 
     public static void main(String[] args){
         //testPart();
-        //testTFIDF(2.6,file1Name);
+        testTFIDF(2.6,file1Name);
         //List<String> phraseList = HanLP.extractPhrase(input, 3);
         //System.out.println(phraseList);
         //KeyWordComputer kwc = new KeyWordComputer(5);
         //Collection<Keyword> result = kwc.computeArticleTfidf(file1Name, file1Content);
         //System.out.println(result);
-        testApriori();
+        //testApriori();
     }
 
     public static void testApriori(){

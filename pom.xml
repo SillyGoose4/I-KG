@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.nnu.jyjs</groupId>
     <artifactId>knowledgegraph</artifactId>
-    <version>1.0</version>
+    <version>1</version>
     <name>knowledgegraph</name>
     <description>Knowledge Graph Created By NNU_JYJS_I-KG</description>
 
@@ -95,6 +95,10 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-ogm-http-driver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-ogm-bolt-driver</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
         <dependency>

@@ -9,8 +9,9 @@ import java.sql.*;
 /**
  * --NO USE--
  * database operate util
- * create by wangj
- * in 3/12/2019
+ * Created by wangj
+ * Created in 3/12/2019
+ * email	wangjiaruo22@hotmail.com
  */
 public class DBUnits {
  

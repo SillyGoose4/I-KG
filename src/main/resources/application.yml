@@ -1,6 +1,13 @@
 server:
-  port: 8080
+  port: 80
+  tomcat:
+    uri-encoding: UTF-8
 spring:
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
   mvc:
     view:
       suffix: .html
@@ -9,6 +16,10 @@ spring:
     static-locations: classpath:/templates/,classpath:/static/
   data:
     neo4j:
-      uri: http://39.108.107.28:7474
+      url: bolt://39.108.107.28:7687
       username: neo4j
       password: SillyGoose4d.
+neo4j:
+  url: bolt://39.108.107.28:7687
+  username: neo4j
+  password: SillyGoose4d.

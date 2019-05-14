@@ -4,7 +4,9 @@ import cn.nnu.jyjs.knowledgegraph.Interface.VocabularySort;
 import cn.nnu.jyjs.knowledgegraph.domain.*;
 import cn.nnu.jyjs.knowledgegraph.service.Beans;
 import cn.nnu.jyjs.knowledgegraph.service.NodeRepository;
+import cn.nnu.jyjs.knowledgegraph.service.NodeService;
 import cn.nnu.jyjs.knowledgegraph.tools.Apriori;
+import cn.nnu.jyjs.knowledgegraph.tools.FileReader;
 import cn.nnu.jyjs.knowledgegraph.tools.ParticipleProcessing;
 import cn.nnu.jyjs.knowledgegraph.tools.TFIDF;
 import com.hankcs.hanlp.HanLP;
@@ -12,25 +14,29 @@ import net.sf.json.JSONArray;
 import org.ansj.app.keyword.KeyWordComputer;
 import org.ansj.app.keyword.Keyword;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * data controller, all request return json data.
  */
 @RestController
-@RequestMapping(value = "/data/")
+@RequestMapping(value = "/data/", produces = "application/json; charset=utf-8")
 public class DataController {
 
-    @Autowired
-    NodeRepository nodeRepo;
+    NodeService nodeService;
 
+    private Logger logger = Logger.getLogger("DataController===");
     /**
      * for test
      * @return
@@ -46,37 +52,22 @@ public class DataController {
 
     @RequestMapping(value = "Math1Data")
     public String getMath1GraphData() throws IOException {
-        List<Graph> ls = loadWords("math1.csv");
+        List<Graph> ls = FileReader.loadWords("math1.csv");
+        // 从数据库中读
+
         JSONArray jsonArray = JSONArray.fromObject(ls);
         return jsonArray.toString();
     }
 
     @RequestMapping(value = "PhysicalData")
     public String getPhy1GraphData() throws IOException {
-        List<Graph> ls = loadWords("physical1.csv");
+        List<Graph> ls = FileReader.loadWords("physical1.csv");
+        // 同上
         JSONArray jsonArray = JSONArray.fromObject(ls);
         return jsonArray.toString();
     }
 
-    public List<Graph> loadWords(String path) throws IOException {
-        Resource resource = Beans.createResourceLoader().getResource("classpath:"+path);
-        //InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-        InputStream is = resource.getInputStream();
-        List<Graph> graphs = new LinkedList<>();
-        byte[] temp = new byte[1024];
-        String s;
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-        if(is == null){
-            System.err.println("null");
-        }
-        while ((s = bufferedReader.readLine()) != null) {
-            String[] t = s.split(",");
-            System.out.println(t[0]+"    "+t[1]);
-            Graph graph = new Graph(t[0],t[1],"相关关系");
-            graphs.add(graph);
-        }
-        return graphs;
-    }
+
     /**
      * --NO USE--
      * @param fileName
@@ -100,10 +91,11 @@ public class DataController {
     @RequestMapping(value="upload",method = RequestMethod.POST)
     public String handleFileUpload(HttpServletRequest request) {
         List<String> fileNames = new LinkedList<>();
+        HttpSession session = request.getSession();
         JSONArray json;
         Map<String,String> m = getFile(request);
         for(Map.Entry e : m.entrySet()) {
-            SContent.setData(request.getSession().getId(), (String)e.getKey(), (String)e.getValue());
+            SContent.setData(session.getId(), (String)e.getKey(), (String)e.getValue());
             fileNames.add((String)e.getKey());
         }
         json = JSONArray.fromObject(fileNames);
@@ -121,7 +113,16 @@ public class DataController {
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
             for (MultipartFile multipartFile : files) {
                 String sName = multipartFile.getOriginalFilename();
-                String sContent = new String(multipartFile.getBytes());
+                logger.info(multipartFile.getContentType());
+                //InputStreamReader ioReader = new InputStreamReader(multipartFile.getInputStream(), StandardCharsets.UTF_8);
+                //char[] buf = new char[1024];
+                //StringBuilder builder = new StringBuilder();
+                //int i = 0;
+                //while((i = ioReader.read(buf,0,buf.length)) < 0){
+                //    builder.append(buf,0,i);
+                //}
+                String sContent = new String(multipartFile.getBytes(),0,multipartFile.getBytes().length, StandardCharsets.UTF_8);
+                logger.info(sContent);
                 name_content.put(sName,sContent);
             }
             return name_content;
@@ -150,7 +151,8 @@ public class DataController {
      */
     @RequestMapping(value = "participate",method = RequestMethod.GET)
     public String getPart(@RequestParam(value = "fileName") String fileName, HttpServletRequest request){
-        String content = SContent.getContent(request.getSession().getId(),fileName);
+        HttpSession session = request.getSession();
+        String content = SContent.getContent(session.getId(),fileName);
         Assmble assmble = ParticipleProcessing.processing(content);
         List<String> words = new LinkedList<>();
         for(Vocabulary vocabulary : assmble.getWords()){
@@ -169,7 +171,8 @@ public class DataController {
      */
     @RequestMapping(value = "frequency",method = RequestMethod.GET)
     public String getFreq(@RequestParam(value = "fileName") String fileName,HttpServletRequest request){
-        String content = SContent.getContent(request.getSession().getId(),fileName);
+        HttpSession session = request.getSession();
+        String content = SContent.getContent(session.getId(),fileName);
         Assmble assmble = ParticipleProcessing.processing(content);
         List<String> words = new LinkedList<>();
         List<Vocabulary> vocabularies = assmble.getWords().subList(0,assmble.getWords().size());
@@ -206,14 +209,22 @@ public class DataController {
     public String calcKey(@RequestParam(value = "fileName") String sName,
                           @RequestParam(value = "_threahold",required = false) Double _threa,
                           HttpServletRequest request){
-        String content = SContent.getContent(request.getSession().getId(),sName);
+        HttpSession session = request.getSession();
+        String content = SContent.getContent(session.getId(),sName);
         Map<String,String> map = getFile(request);
         TFIDF.setFileByMap(map);
         JSONArray jsonArray = JSONArray.fromObject(_t(_threa,sName,content));
         return jsonArray.toString();
     }
 
-    private List<Vocabulary> _t(Double _threa, String sName, String content){
+    /**
+     * 公共过程， 计算关键词
+     * @param _threa    阈值
+     * @param sName     文本名称
+     * @param content   文本内容
+     * @return
+     */
+    private List<Vocabulary> _t(Double _threa, String  sName, String content){
         if(_threa != null){
             TFIDF.setThreshold(_threa);
         }
@@ -229,11 +240,19 @@ public class DataController {
         return lists;
     }
 
+    /**
+     * 计算关系的
+     * @param _threa
+     * @param fileName
+     * @param request
+     * @return
+     */
     private List<List<Vocabulary>> _link(Double _threa, List<String> fileName, HttpServletRequest request){
         List<List<String>> d = new LinkedList<>();
+        HttpSession session = request.getSession();
         for (String s:
              fileName) {
-            List<Vocabulary> vocabularies = _t(_threa, s,SContent.getContent(request.getSession().getId(),s));
+            List<Vocabulary> vocabularies = _t(_threa, s,SContent.getContent(session.getId(),s));
             List<String> keys = new LinkedList<>();
             for (Vocabulary v:
                  vocabularies) {
@@ -247,20 +266,28 @@ public class DataController {
 
     }
 
+    /**
+     * 添加图结点（实体）
+     * @param vocabularies
+     */
     private void addGraphNode(List<Vocabulary> vocabularies){
         for(Vocabulary v:vocabularies){
-            nodeRepo.save(new Node(v));
+            //nodeRepo.save(new Node(v));
         }
     }
 
+    /**
+     * 添加图连结（关系）
+     * @param link
+     */
     private void addGraphLink(List<List<Vocabulary>> link){
         for(List<Vocabulary> ls : link){
-            Node f = nodeRepo.findByNatureStr(ls.get(0).getNatureStr());
+            //Node f = nodeRepo.findByNatureStr(ls.get(0).getNatureStr());
             for(Vocabulary v:ls){
-                Node n = nodeRepo.findByNatureStr(v.getNatureStr());
-                if(!v.getNatureStr().equals(f.getNatureStr())){
-                    f.addRelationship(n);
-                }
+               // Node n = nodeRepo.findByNatureStr(v.getNatureStr());
+                //if(!v.getNatureStr().equals(f.getNatureStr())){
+                    //f.addRelationship(n);
+                //}
             }
         }
     }
@@ -269,6 +296,12 @@ public class DataController {
 
     }
 
+    /**
+     * 计算关系
+     * @param _threa
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "relationship")
     public String relationship(@RequestParam(value = "_threa",required = false) Double _threa
                             ,HttpServletRequest request){
@@ -278,6 +311,13 @@ public class DataController {
         return jsonArray.toString();
     }
 
+    /**
+     * 计算关键词通过Text Rank算法
+     * @param fileName
+     * @param size
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "textRank")
     public String getWordsByTextRank(@RequestParam(value = "fileName") String fileName,
                                      @RequestParam(value = "size", required = false) Integer size,

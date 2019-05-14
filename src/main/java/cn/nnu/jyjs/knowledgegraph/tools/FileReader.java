@@ -1,5 +1,7 @@
 package cn.nnu.jyjs.knowledgegraph.tools;
 
+import cn.nnu.jyjs.knowledgegraph.domain.Graph;
+import cn.nnu.jyjs.knowledgegraph.service.Beans;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.POIXMLDocument;
@@ -11,8 +13,12 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.springframework.core.io.Resource;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -200,5 +206,49 @@ public class FileReader {
         return ret;
     }
 
+    /**
+     * 读取CSV，返回一行数据的列表
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static List<String> loadCSV(String path) throws IOException{
+        Resource resource = Beans.createResourceLoader().getResource("classpath:"+path);
+        //InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        
+        InputStream is = resource.getInputStream();
+        byte[] temp = new byte[1024];
+        List<String> ls = new LinkedList<>();
+        String s;
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        if(is == null){
+            System.err.println("null");
+        }
+        while ((s = bufferedReader.readLine()) != null) {
+            String tempS = s;
+            ls.add(tempS);
+        }
+        return ls;
+    }
+
+    /**
+     * 加载词
+     * ----------------------NO USE
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static List<Graph> loadWords(String path) throws IOException {
+        List<String> ls = loadCSV(path);
+        List<Graph> graphs = new LinkedList<>();
+        for (String s:
+                ls) {
+            String[] t = s.split(",");
+            System.out.println(t[0] + "    " + t[1]);
+            Graph graph = new Graph(t[0], t[1], "相关关系");
+            graphs.add(graph);
+        }
+        return graphs;
+    }
 }
 
